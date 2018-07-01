@@ -81,7 +81,7 @@ int main()
     sf::Keyboard::Key p2down = sf::Keyboard::K;
 
 
-    float brate = mrate*2.0;
+    float brate = 1;
     Ball ball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
     ball.applyVector(sf::Vector2f(brate,0));
 
@@ -90,11 +90,15 @@ int main()
     sf::FloatRect winbRwall(x,0,1,y);
     sf::FloatRect winbLwall(0,0,1,y);
 
+    sf::Clock clock;
+    sf::Time tickMod = sf::milliseconds(4);
+
     window.clear(sf::Color::Black);
     window.display();
     // run the program as long as the window is open
     while (window.isOpen())
     {
+
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
@@ -103,60 +107,63 @@ int main()
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed){
                 window.close();
-                std::cout << "Closed Caught!" << std::endl;
+                //std::cout << "Closed Caught!" << std::endl;
             }
             if (event.type == sf::Event::KeyPressed){
-                std::cout << "KeyPressed Caught!" << std::endl;
+                //std::cout << "KeyPressed Caught!" << std::endl;
                 start = false;
-                float prate = 1/mrate;
-                if(sf::Keyboard::isKeyPressed(p1up) && !p1Paddle.collision(winbCeil)){
-                    p1Paddle.movePaddle(-prate);
-                } else if(sf::Keyboard::isKeyPressed(p1down) && !p1Paddle.collision(winbFloor)){
-                    p1Paddle.movePaddle(prate);
-                }
-                if(sf::Keyboard::isKeyPressed(p2up) && !p2Paddle.collision(winbCeil)){
-                    p2Paddle.movePaddle(-prate);
-                } else if(sf::Keyboard::isKeyPressed(p2down) && !p2Paddle.collision(winbFloor)){
-                    p2Paddle.movePaddle(prate);
-                }
-                /*if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && win){
-                    start = true;
-                    win = false;
-                }*/
             }
         }
-
-        /// Ball Movement
-        if(!start && !win){
-            ball.step();
-            if(ball.collision(winbCeil) || ball.collision(winbFloor)){
-                ball.reflectVector(false,true);
+        if(clock.getElapsedTime().asMilliseconds() > tickMod.asMilliseconds()){
+            //std::cout << elapsed.asSeconds() << "=" << tickMod.asSeconds() << std::endl;
+            float prate = 1;
+            if(sf::Keyboard::isKeyPressed(p1up) && !p1Paddle.collision(winbCeil)){
+                p1Paddle.movePaddle(-prate);
+            } else if(sf::Keyboard::isKeyPressed(p1down) && !p1Paddle.collision(winbFloor)){
+                p1Paddle.movePaddle(prate);
             }
-            Ball nball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
-            if(ball.collision(winbRwall)){
-                p1score++;
-                nball.applyVector(sf::Vector2f(-brate,0));
-                ball = nball;
-                //delete nball;
+            if(sf::Keyboard::isKeyPressed(p2up) && !p2Paddle.collision(winbCeil)){
+                p2Paddle.movePaddle(-prate);
+            } else if(sf::Keyboard::isKeyPressed(p2down) && !p2Paddle.collision(winbFloor)){
+                p2Paddle.movePaddle(prate);
             }
-            if(ball.collision(winbLwall)){
-                p2score++;
-                nball.applyVector(sf::Vector2f(brate,0));
-                ball = nball;
-                //delete nball;
-            }
-            if(ball.collision(p1Paddle.getBounds())){
-                if(ball.getVector().y == 0){
-                    ball.applyVector(sf::Vector2f(0,brate));
+            /*if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && win){
+                start = true;
+                win = false;
+            }*/
+            /// Ball Movement
+            if(!start && !win){
+                ball.step();
+                if(ball.collision(winbCeil) || ball.collision(winbFloor)){
+                    ball.reflectVector(false,true);
                 }
-                ball.reflectVector(true,p1Paddle.getPosition().y > y/2);
-            }
-            if(ball.collision(p2Paddle.getBounds())){
-                if(ball.getVector().y == 0){
-                    ball.applyVector(sf::Vector2f(0,-brate));
+                Ball nball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
+                if(ball.collision(winbRwall)){
+                    p1score++;
+                    nball.applyVector(sf::Vector2f(-brate,0));
+                    ball = nball;
+                    //delete nball;
                 }
-                ball.reflectVector(true,p2Paddle.getPosition().y > y/2);
+                if(ball.collision(winbLwall)){
+                    p2score++;
+                    nball.applyVector(sf::Vector2f(brate,0));
+                    ball = nball;
+                    //delete nball;
+                }
+                if(ball.collision(p1Paddle.getBounds())){
+                    if(ball.getVector().y == 0){
+                        ball.applyVector(sf::Vector2f(0,brate));
+                    }
+                    ball.reflectVector(true,p1Paddle.getPosition().y > y/2);
+                }
+                if(ball.collision(p2Paddle.getBounds())){
+                    if(ball.getVector().y == 0){
+                        ball.applyVector(sf::Vector2f(0,-brate));
+                    }
+                    ball.reflectVector(true,p2Paddle.getPosition().y > y/2);
+                }
             }
+            clock.restart();
         }
         if(win = (p1score == winCon)){
             endText.setString("\tPlayer 1 Wins!"/*\nPress SPACE to play again."*/);
