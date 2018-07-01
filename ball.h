@@ -20,6 +20,7 @@ public:
     bool collision(sf::FloatRect);
     void draw(sf::RenderWindow*);
     void applyVector(sf::Vector2f);
+    sf::Vector2f getVector();
     void reflectVector(bool,bool);
     void step();
     void setPosition(sf::Vector2f);

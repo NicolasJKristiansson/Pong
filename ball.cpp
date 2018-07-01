@@ -20,6 +20,10 @@ void Ball::applyVector(sf::Vector2f vec){
     movVec = sf::Vector2f(movVec.x+vec.x,movVec.y+vec.y);
 }
 
+sf::Vector2f Ball::getVector(){
+    return movVec;
+}
+
 void Ball::reflectVector(bool x_axis, bool y_axis){
     int x_reflect = x_axis ? -1 : 1;
     int y_reflect = y_axis ? -1 : 1;

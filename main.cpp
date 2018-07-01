@@ -25,17 +25,37 @@ int main()
     sf::Font font;
     font.loadFromFile("consola.ttf");
 
+    bool start = true;
+    bool win = false;
+    float mrate = .05;
+    int winCon = 10;
+
+    sf::Text startText;
+    startText.setFont(font);
+    startText.setCharacterSize(x/40);
+    startText.setFillColor(sf::Color::White);
+    startText.setString("Use W/S and I/K to move paddles.\n\tPress any key to begin.");
+    startText.setPosition(sf::Vector2f((x/2)-(x/4.6),(y/4)));
+
+    sf::Text endText;
+    endText.setFont(font);
+    endText.setCharacterSize(x/40);
+    endText.setFillColor(sf::Color::White);
+    endText.setPosition(sf::Vector2f((x/2)-(x/6),(y/4)));
+    //p2Score.setString("");
+
+    int p1score = 0;
+    int p2score = 0;
+
     sf::Text p1Score;
     p1Score.setFont(font);
     p1Score.setCharacterSize(x/20);
     p1Score.setFillColor(sf::Color::White);
-    p1Score.setString(int_to_string(0));
 
     sf::Text p2Score;
     p2Score.setFont(font);
     p2Score.setCharacterSize(x/20);
     p2Score.setFillColor(sf::Color::White);
-    p2Score.setString(int_to_string(0));
 
     p1Score.setPosition(sf::Vector2f((x/2)-(x/4),y/100));
     p2Score.setPosition(sf::Vector2f((x/2)+(x/4),y/100));
@@ -54,13 +74,14 @@ int main()
     Paddle p1Paddle(sf::Vector2f(x/40,y/2-paddleHeight/2), sf::Vector2f(paddleWidth,paddleHeight));
     Paddle p2Paddle(sf::Vector2f(x-x/40-paddleWidth,y/2-paddleHeight/2), sf::Vector2f(paddleWidth,paddleHeight));
 
-    sf::Keyboard::Key p1up = sf::Keyboard::Up;
-    sf::Keyboard::Key p1down = sf::Keyboard::Down;
+    sf::Keyboard::Key p1up = sf::Keyboard::W;
+    sf::Keyboard::Key p1down = sf::Keyboard::S;
 
-    sf::Keyboard::Key p2up = sf::Keyboard::W;
-    sf::Keyboard::Key p2down = sf::Keyboard::S;
+    sf::Keyboard::Key p2up = sf::Keyboard::I;
+    sf::Keyboard::Key p2down = sf::Keyboard::K;
 
-    float brate = .1;
+
+    float brate = mrate*2.0;
     Ball ball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
     ball.applyVector(sf::Vector2f(brate,0));
 
@@ -86,56 +107,70 @@ int main()
             }
             if (event.type == sf::Event::KeyPressed){
                 std::cout << "KeyPressed Caught!" << std::endl;
-                float movemod = 10.0;
+                start = false;
+                float prate = 1/mrate;
                 if(sf::Keyboard::isKeyPressed(p1up) && !p1Paddle.collision(winbCeil)){
-                    p1Paddle.movePaddle(-movemod);
+                    p1Paddle.movePaddle(-prate);
                 } else if(sf::Keyboard::isKeyPressed(p1down) && !p1Paddle.collision(winbFloor)){
-                    p1Paddle.movePaddle(movemod);
+                    p1Paddle.movePaddle(prate);
                 }
                 if(sf::Keyboard::isKeyPressed(p2up) && !p2Paddle.collision(winbCeil)){
-                    p2Paddle.movePaddle(-movemod);
+                    p2Paddle.movePaddle(-prate);
                 } else if(sf::Keyboard::isKeyPressed(p2down) && !p2Paddle.collision(winbFloor)){
-                    p2Paddle.movePaddle(movemod);
+                    p2Paddle.movePaddle(prate);
                 }
+                /*if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && win){
+                    start = true;
+                    win = false;
+                }*/
             }
         }
 
         /// Ball Movement
-        ball.step();
-        if(ball.collision(winbCeil) || ball.collision(winbFloor)){
-            ball.reflectVector(false,true);
-        }
-        Ball nball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
-        if(ball.collision(winbRwall)){
-            nball.applyVector(sf::Vector2f(-brate,0));
-            ball = nball;
-            //delete nball;
-        }
-        if(ball.collision(winbLwall)){
-            nball.applyVector(sf::Vector2f(brate,0));
-            ball = nball;
-            //delete nball;
-        }
-        if(ball.collision(p1Paddle.getBounds())){
-            //std::cout << p1Paddle.getPosition().y + paddleHeight/2 << "!=" << y/2 << std::endl;
-            if(p1Paddle.getPosition().y+paddleHeight/2 == y/2){
-                ball.applyVector(sf::Vector2f(0,brate));
+        if(!start && !win){
+            ball.step();
+            if(ball.collision(winbCeil) || ball.collision(winbFloor)){
+                ball.reflectVector(false,true);
             }
-            ball.reflectVector(true,p1Paddle.getPosition().y > y/2);
-        }
-        if(ball.collision(p2Paddle.getBounds())){
-            //std::cout << p2Paddle.getPosition().y << "!=" << y/2 << std::endl;
-            if(p2Paddle.getPosition().y+paddleHeight/2 == y/2){
-                ball.applyVector(sf::Vector2f(0,-brate));
+            Ball nball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
+            if(ball.collision(winbRwall)){
+                p1score++;
+                nball.applyVector(sf::Vector2f(-brate,0));
+                ball = nball;
+                //delete nball;
             }
-            ball.reflectVector(true,p2Paddle.getPosition().y > y/2);
+            if(ball.collision(winbLwall)){
+                p2score++;
+                nball.applyVector(sf::Vector2f(brate,0));
+                ball = nball;
+                //delete nball;
+            }
+            if(ball.collision(p1Paddle.getBounds())){
+                if(ball.getVector().y == 0){
+                    ball.applyVector(sf::Vector2f(0,brate));
+                }
+                ball.reflectVector(true,p1Paddle.getPosition().y > y/2);
+            }
+            if(ball.collision(p2Paddle.getBounds())){
+                if(ball.getVector().y == 0){
+                    ball.applyVector(sf::Vector2f(0,-brate));
+                }
+                ball.reflectVector(true,p2Paddle.getPosition().y > y/2);
+            }
+        }
+        if(win = (p1score == winCon)){
+            endText.setString("\tPlayer 1 Wins!"/*\nPress SPACE to play again."*/);
+        } else if(win = (p2score == winCon)){
+            endText.setString("\tPlayer 2 Wins!"/*\nPress SPACE to play again."*/);
         }
 
 
         // clear the window
         window.clear(sf::Color::Black);
         // draw everything here...
+        p1Score.setString(int_to_string(p1score));
         window.draw(p1Score);
+        p2Score.setString(int_to_string(p2score));
         window.draw(p2Score);
 
         p1Paddle.draw(&window);
@@ -144,6 +179,14 @@ int main()
 
         for(int k = 0; k < net.size(); k++){
             window.draw(net[k]);
+        }
+
+        if(start){
+            window.draw(startText);
+        }
+
+        if(win && !start){
+            window.draw(endText);
         }
 
         window.display();
