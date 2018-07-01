@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1530397411 source:c:\users\norphesius\snakepit\codeblocksprojects\pong\main.cpp
+1530403673 source:c:\users\norphesius\snakepit\codeblocksprojects\pong\main.cpp
 	<SFML/Graphics.hpp>
 	<iostream>
 	<sstream>
@@ -10,6 +10,8 @@
 	<string>
 	<cmath>
 	<time.h>
+	"paddle.h"
+	"ball.h"
 
 1526097678 c:\program files (x86)\codeblocks\sfml\include\sfml\graphics.hpp
 	<SFML/Window.hpp>
@@ -428,4 +430,28 @@
 	<stdlib.h>
 	<Windows.h>
 	<string>
+
+1530400322 source:c:\users\norphesius\snakepit\codeblocksprojects\pong\paddle.cpp
+	"paddle.h"
+
+1530400289 c:\users\norphesius\snakepit\codeblocksprojects\pong\paddle.h
+	<iostream>
+	<stdio.h>
+	<vector>
+	<stdlib.h>
+	<string>
+	<cmath>
+	<SFML/Graphics.hpp>
+
+1530402391 source:c:\users\norphesius\snakepit\codeblocksprojects\pong\ball.cpp
+	"ball.h"
+
+1530402272 c:\users\norphesius\snakepit\codeblocksprojects\pong\ball.h
+	<iostream>
+	<stdio.h>
+	<vector>
+	<stdlib.h>
+	<string>
+	<cmath>
+	<SFML/Graphics.hpp>
 
