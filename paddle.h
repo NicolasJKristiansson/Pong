@@ -17,6 +17,8 @@ public:
     Paddle(sf::Vector2f,sf::Vector2f);
 
     bool collision(sf::FloatRect);
+    sf::FloatRect getBounds();
+    sf::Vector2f getPosition();
     void movePaddle(int);
     void draw(sf::RenderWindow*);
 };

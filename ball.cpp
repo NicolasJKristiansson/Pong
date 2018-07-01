@@ -25,3 +25,11 @@ void Ball::reflectVector(bool x_axis, bool y_axis){
     int y_reflect = y_axis ? -1 : 1;
     movVec = sf::Vector2f(x_reflect*movVec.x,y_reflect*movVec.y);
 }
+
+void Ball::step(){
+    ball.move(movVec);
+}
+
+void Ball::setPosition(sf::Vector2f pos){
+    ball.setPosition(pos);
+}

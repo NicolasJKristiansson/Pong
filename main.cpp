@@ -60,7 +60,9 @@ int main()
     sf::Keyboard::Key p2up = sf::Keyboard::W;
     sf::Keyboard::Key p2down = sf::Keyboard::S;
 
+    float brate = .1;
     Ball ball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
+    ball.applyVector(sf::Vector2f(brate,0));
 
     sf::FloatRect winbCeil(0,0,x,1);
     sf::FloatRect winbFloor(0,y,x,1);
@@ -99,8 +101,35 @@ int main()
         }
 
         /// Ball Movement
-
-
+        ball.step();
+        if(ball.collision(winbCeil) || ball.collision(winbFloor)){
+            ball.reflectVector(false,true);
+        }
+        Ball nball(sf::Vector2f(x/2-paddleWidth/2,y/2-paddleWidth/2),sf::Vector2f(paddleWidth,paddleWidth));
+        if(ball.collision(winbRwall)){
+            nball.applyVector(sf::Vector2f(-brate,0));
+            ball = nball;
+            //delete nball;
+        }
+        if(ball.collision(winbLwall)){
+            nball.applyVector(sf::Vector2f(brate,0));
+            ball = nball;
+            //delete nball;
+        }
+        if(ball.collision(p1Paddle.getBounds())){
+            //std::cout << p1Paddle.getPosition().y + paddleHeight/2 << "!=" << y/2 << std::endl;
+            if(p1Paddle.getPosition().y+paddleHeight/2 == y/2){
+                ball.applyVector(sf::Vector2f(0,brate));
+            }
+            ball.reflectVector(true,p1Paddle.getPosition().y > y/2);
+        }
+        if(ball.collision(p2Paddle.getBounds())){
+            //std::cout << p2Paddle.getPosition().y << "!=" << y/2 << std::endl;
+            if(p2Paddle.getPosition().y+paddleHeight/2 == y/2){
+                ball.applyVector(sf::Vector2f(0,-brate));
+            }
+            ball.reflectVector(true,p2Paddle.getPosition().y > y/2);
+        }
 
 
         // clear the window

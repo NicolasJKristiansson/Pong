@@ -21,6 +21,8 @@ public:
     void draw(sf::RenderWindow*);
     void applyVector(sf::Vector2f);
     void reflectVector(bool,bool);
+    void step();
+    void setPosition(sf::Vector2f);
 };
 
 #endif

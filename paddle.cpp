@@ -10,6 +10,14 @@ bool Paddle::collision(sf::FloatRect ball){
     return paddle.getGlobalBounds().intersects(ball);
 }
 
+sf::FloatRect Paddle::getBounds(){
+    return paddle.getGlobalBounds();
+}
+
+sf::Vector2f Paddle::getPosition(){
+    return paddle.getPosition();
+}
+
 void Paddle::movePaddle(int y){
     paddle.move(0,y);
 }
